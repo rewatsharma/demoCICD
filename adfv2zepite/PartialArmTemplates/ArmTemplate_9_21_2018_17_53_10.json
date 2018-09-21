@@ -6,42 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory Name",
 			"defaultValue": "adfv2zepite"
-		},
-		"azurebatchlinkedservice_accessKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessKey' of 'azurebatchlinkedservice'"
-		},
-		"blobreference_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'blobreference'"
-		},
-		"sqldbreference_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'sqldbreference'"
-		},
-		"clean_blob_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "Names.csv"
-		},
-		"clean_blob_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "clean"
-		},
-		"azurebatchlinkedservice_properties_typeProperties_accountName": {
-			"type": "string",
-			"defaultValue": "zepitebatchaccount"
-		},
-		"trigger1_properties_Pipeline_Custom_Activity_parameters_sourceFolder": {
-			"type": "string",
-			"defaultValue": "@triggerBody().folderPath"
-		},
-		"trigger1_properties_Pipeline_Custom_Activity_parameters_sourceFile": {
-			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
-		},
-		"trigger1_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/66931c95-ffd8-4404-b255-46e831966611/resourceGroups/poc_user/providers/Microsoft.Storage/storageAccounts/zepitestorage"
 		}
 	},
 	"variables": {
@@ -57,7 +21,6 @@
 					{
 						"name": "ConsoleApp",
 						"type": "Custom",
-						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -65,7 +28,6 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [],
 						"typeProperties": {
 							"command": "\"TransformColimns.exe\"",
 							"resourceLinkedService": {
@@ -90,10 +52,6 @@
 									"value": "@pipeline().parameters.sourceFile",
 									"type": "Expression"
 								}
-							},
-							"referenceObjects": {
-								"linkedServices": [],
-								"datasets": []
 							}
 						},
 						"linkedServiceName": {
@@ -119,7 +77,6 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [],
 						"typeProperties": {
 							"source": {
 								"type": "BlobSource",
@@ -144,15 +101,13 @@
 						"inputs": [
 							{
 								"referenceName": "clean_blob",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "sqldest",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					}
@@ -164,12 +119,9 @@
 					"sourceFile": {
 						"type": "String"
 					}
-				},
-				"annotations": []
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/blobreference')]",
-				"[concat(variables('factoryId'), '/linkedServices/azurebatchlinkedservice')]",
 				"[concat(variables('factoryId'), '/datasets/clean_blob')]",
 				"[concat(variables('factoryId'), '/datasets/sqldest')]"
 			]
@@ -183,7 +135,6 @@
 					"referenceName": "blobreference",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "AzureBlob",
 				"structure": [
 					{
@@ -213,13 +164,10 @@
 						"skipLineCount": 0,
 						"firstRowAsHeader": true
 					},
-					"fileName": "[parameters('clean_blob_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('clean_blob_properties_typeProperties_folderPath')]"
+					"fileName": "Names.csv",
+					"folderPath": "clean"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/blobreference')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/sqldest')]",
@@ -230,7 +178,6 @@
 					"referenceName": "sqldbreference",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "AzureSqlTable",
 				"structure": [
 					{
@@ -253,68 +200,13 @@
 				"typeProperties": {
 					"tableName": "[concat('[', 'dbo].[tbl_names]')]"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/sqldbreference')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/azurebatchlinkedservice')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBatch",
-				"typeProperties": {
-					"accountName": "[parameters('azurebatchlinkedservice_properties_typeProperties_accountName')]",
-					"accessKey": {
-						"type": "SecureString",
-						"value": "[parameters('azurebatchlinkedservice_accessKey')]"
-					},
-					"batchUri": "https://zepitebatchaccount.eastus.batch.azure.com",
-					"poolName": "mypool",
-					"linkedServiceName": {
-						"referenceName": "blobreference",
-						"type": "LinkedServiceReference"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/blobreference')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/blobreference')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('blobreference_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/sqldbreference')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('sqldbreference_connectionString')]"
-				}
-			},
-			"dependsOn": []
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/trigger1')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
 				"runtimeState": "Started",
 				"pipelines": [
 					{
@@ -323,15 +215,15 @@
 							"type": "PipelineReference"
 						},
 						"parameters": {
-							"sourceFolder": "[parameters('trigger1_properties_Pipeline_Custom_Activity_parameters_sourceFolder')]",
-							"sourceFile": "[parameters('trigger1_properties_Pipeline_Custom_Activity_parameters_sourceFile')]"
+							"sourceFolder": "@triggerBody().folderPath",
+							"sourceFile": "@triggerBody().fileName"
 						}
 					}
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/raw/",
-					"scope": "[parameters('trigger1_properties_typeProperties_scope')]",
+					"scope": "/subscriptions/66931c95-ffd8-4404-b255-46e831966611/resourceGroups/poc_user/providers/Microsoft.Storage/storageAccounts/zepitestorage",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]

@@ -1,1 +1,36 @@
-{}
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfv2zepite"
+		},
+		"azurebatchlinkedservice_accessKey": {
+			"value": ""
+		},
+		"blobreference_connectionString": {
+			"value": ""
+		},
+		"sqldbreference_connectionString": {
+			"value": ""
+		},
+		"clean_blob_properties_typeProperties_fileName": {
+			"value": "Names.csv"
+		},
+		"clean_blob_properties_typeProperties_folderPath": {
+			"value": "clean"
+		},
+		"azurebatchlinkedservice_properties_typeProperties_accountName": {
+			"value": "zepitebatchaccount"
+		},
+		"trigger1_properties_Pipeline_Custom_Activity_parameters_sourceFolder": {
+			"value": "@triggerBody().folderPath"
+		},
+		"trigger1_properties_Pipeline_Custom_Activity_parameters_sourceFile": {
+			"value": "@triggerBody().fileName"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"value": "/subscriptions/66931c95-ffd8-4404-b255-46e831966611/resourceGroups/poc_user/providers/Microsoft.Storage/storageAccounts/zepitestorage"
+		}
+	}
+}
