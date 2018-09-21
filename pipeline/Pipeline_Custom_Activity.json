@@ -1,0 +1,109 @@
+{
+	"name": "Pipeline_Custom_Activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "ConsoleApp",
+				"type": "Custom",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"command": "\"TransformColimns.exe\"",
+					"resourceLinkedService": {
+						"referenceName": "blobreference",
+						"type": "LinkedServiceReference"
+					},
+					"folderPath": "devcontainer/AppData",
+					"extendedProperties": {
+						"storageConnectionString": {
+							"type": "String",
+							"value": "DefaultEndpointsProtocol=https;AccountName=zepitestorage;AccountKey=IMr+GSBIR4BvgcLSdXncf08VjWWM0jEDZXrGftcdgoNdH5qfD5WVSfVI3H3Yry1ZljmHBsw6w7Gwlsjm77G0Hg==;EndpointSuffix=core.windows.net"
+						},
+						"sqlConnection": {
+							"type": "String",
+							"value": "Data Source=zepite.database.windows.net;Initial Catalog=zepite;User ID=admin123;Password=login@12345"
+						},
+						"rawFolder": {
+							"value": "@pipeline().parameters.sourceFolder",
+							"type": "Expression"
+						},
+						"fileName": {
+							"value": "@pipeline().parameters.sourceFile",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "azurebatchlinkedservice",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Copy_Blob_SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "ConsoleApp",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "BlobSource",
+						"recursive": true
+					},
+					"sink": {
+						"type": "SqlSink",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0,
+					"translator": {
+						"type": "TabularTranslator",
+						"columnMappings": {
+							"FirstName": "FirstName",
+							"LastName": "LastName",
+							"FullName": "FullName",
+							"ID": "ID"
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "clean_blob",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "sqldest",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"sourceFolder": {
+				"type": "String"
+			},
+			"sourceFile": {
+				"type": "String"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,17 @@
+{
+	"name": "azurebatchlinkedservice",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureBatch",
+		"typeProperties": {
+			"accountName": "zepitebatchaccount",
+			"batchUri": "https://zepitebatchaccount.eastus.batch.azure.com",
+			"poolName": "mypool",
+			"linkedServiceName": {
+				"referenceName": "blobreference",
+				"type": "LinkedServiceReference"
+			},
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFERlYyWkVQSVRFX2JmNDgyMjQ0LTMyN2QtNDQ5Zi1iZjRhLTljMDQ5YWYzYjVjOCINCn0="
+		}
+	}
+}
