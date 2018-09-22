@@ -55,7 +55,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy Data1",
+						"name": "Copy_Activity",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
