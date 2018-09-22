@@ -49,7 +49,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/Latest_Pipeline_22092018')]",
+			"name": "[concat(parameters('factoryName'), '/Latest_Pipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
